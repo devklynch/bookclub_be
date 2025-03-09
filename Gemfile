@@ -48,8 +48,8 @@ group :development, :test do
   gem "shoulda-matchers"
   gem "webmock"
   gem "vcr"
-  gem 'factory_bot_rails'
-  gem 'faker'
+  gem "factory_bot_rails"
+  gem "faker"
 
   # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
   gem "brakeman", require: false
