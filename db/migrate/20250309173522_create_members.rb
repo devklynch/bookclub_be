@@ -4,7 +4,6 @@ class CreateMembers < ActiveRecord::Migration[8.0]
       t.references :user, null: false, foreign_key: true
       t.references :book_club, null: false, foreign_key: true
       t.timestamps
-
     end
   end
 end
