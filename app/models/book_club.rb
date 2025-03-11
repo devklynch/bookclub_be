@@ -6,5 +6,5 @@ class BookClub < ApplicationRecord
     has_many :polls, dependent: :destroy
 
     validates :name, presence: true, allow_blank: false
-    validates :description, presence: true, allow_bank: true
+    validates :description, presence: true, allow_blank: true
 end

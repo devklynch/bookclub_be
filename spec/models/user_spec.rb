@@ -5,11 +5,11 @@ RSpec.describe User, type: :model do
     it { should have_many(:members) }
     it { should have_many(:book_clubs).through(:members) }
 
-    # it { should have_many(:attendees) }
-    # it { should have_many(:events).through(:attendees) }
+    it { should have_many(:attendees) }
+    it { should have_many(:events).through(:attendees) }
 
-    # it { should have_many(:votes) }
-    # it { should have_many(:options).through(:votes) }
+    it { should have_many(:votes) }
+    it { should have_many(:options).through(:votes) }
   end
 
   describe "validations" do
