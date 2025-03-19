@@ -5,7 +5,7 @@ class Api::V1::EventsController < ApplicationController
         event = Event.find(params[:id])
 
         if user.book_clubs.include?(event.book_club)
-            render json: event
+            render json: EventSerializer.new(event), status: :ok
         else
             render json: {error: "Test Error"}
         end
