@@ -21,7 +21,6 @@ RSpec.describe "Event endpoints", :type => :request do
 
       event = JSON.parse(response.body, symbolize_names: true)
 
-      #binding.pry
       expect(response.status).to eq(200)
       expect(event[:data][:id]).to eq(@event1.id.to_s)
       expect(event[:data][:type]).to eq("event")
@@ -31,6 +30,33 @@ RSpec.describe "Event endpoints", :type => :request do
       expect(event[:data][:attributes][:book]).to eq(@event1.book)
       expect(event[:data][:attributes][:event_notes]).to eq(@event1.event_notes)
       expect(event[:data][:attributes][:book_club_id]).to eq(@book_club1.id)
+    end
+
+    it "should give an error if the user id does not exist" do
+    get api_v1_user_event_path(user_id: 9999999, id: @event1.id)
+
+    json = JSON.parse(response.body, symbolize_names: true)
+
+    expect(response).to have_http_status(:not_found)
+    expect(json[:errors][0][:message]).to eq("Couldn't find User with 'id'=9999999")
+    end
+
+    it "should give an error if the event id does not exist" do
+      get api_v1_user_event_path(user_id: @user1.id, id:9999999 )
+
+      json = JSON.parse(response.body, symbolize_names: true)
+  
+      expect(response).to have_http_status(:not_found)
+      expect(json[:errors][0][:message]).to eq("Couldn't find Event with 'id'=9999999")
+    end
+
+    it "should give a forbidden error if the user doesn't have access to an event" do
+      get api_v1_user_event_path(user_id: @user1.id, id:@event3.id )
+
+      json = JSON.parse(response.body, symbolize_names: true)
+
+      expect(response).to have_http_status(:forbidden)
+      expect(json[:errors][0][:message]).to eq("You are not authorized to view this event")
     end
   end
 end
