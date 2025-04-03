@@ -22,7 +22,7 @@ User.destroy_all
 # Create Users
 users = 10.times.map do 
   User.create!(
-    email: Faker::Internet.email,
+    email: Faker::Internet.unique.email,
     password: "password",
     display_name: Faker::Book.author
   )
