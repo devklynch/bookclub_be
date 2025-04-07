@@ -1,8 +1,12 @@
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+  :recoverable, :rememberable, :validatable,
+  :jwt_authenticatable, jwt_revocation_strategy: Devise::JWT::RevocationStrategies::JTIMatcher
+  before_validation :set_jti, on: :create
+
     has_many :members
     has_many :book_clubs, through: :members
 
@@ -15,4 +19,8 @@ class User < ApplicationRecord
     validates :email, presence: true, uniqueness: true
     validates :display_name, presence: true, allow_blank: false
     validates :password, presence: { require: true }
+
+    def set_jti
+      self.jti ||= SecureRandom.uuid
+    end
 end
