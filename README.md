@@ -32,7 +32,7 @@ Things you may want to cover:
 
 ### Users
 
-#### Create a User
+#### Create a user
 
 Request:
 
