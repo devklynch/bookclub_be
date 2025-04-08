@@ -30,6 +30,42 @@ Things you may want to cover:
 
 ## API Documentation
 
+### Users
+
+#### Create a User
+
+Request:
+
+```
+POST /api/v1/users
+
+Body:
+{
+  "user": {
+    "email": "newuser123@example.com",
+    "display_name": "New User",
+    "password": "password123",
+    "password_confirmation": "password123"
+  }
+}
+```
+
+Successful Response:
+
+```
+Status: 201 Created
+{
+    "data": {
+        "id": "28",
+        "type": "user",
+        "attributes": {
+            "email": "newuser123@example.com",
+            "display_name": "New User"
+        }
+    }
+}
+```
+
 ### Events
 
 #### Get an event
