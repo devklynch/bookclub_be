@@ -3,7 +3,7 @@ class ApplicationController < ActionController::Base
   allow_browser versions: :modern
 
   rescue_from ActiveRecord::RecordInvalid do |e|
-    render json: ErrorSerializer.format_errors([e.message]), status: :unprocessable_entity
+    render json: ErrorSerializer.format_errors(e.record.errors.full_messages), status: :unprocessable_entity
   end
 
   rescue_from ActiveRecord::RecordNotFound do |e|
