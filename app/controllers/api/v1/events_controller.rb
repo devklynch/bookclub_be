@@ -4,7 +4,7 @@ class Api::V1::EventsController < ApplicationController
   def show
     user = User.find(params[:user_id])
     event = Event.find(params[:id])
-
+    
     if user.book_clubs.include?(event.book_club)
       render json: EventSerializer.new(event), status: :ok
     else
@@ -13,7 +13,7 @@ class Api::V1::EventsController < ApplicationController
   end
 
   private
-  
+
   def authenticate_user!
     token = request.headers['Authorization']&.split(' ')&.last
 

@@ -13,11 +13,13 @@ RSpec.describe "Event endpoints", :type => :request do
     @event1 = create(:event, book_club: @book_club1)
     @event2 = create(:event, book_club: @book_club1)
     @event3 = create(:event, book_club: @book_club2)
+
+    @token1 = @user1.generate_jwt
   end
 
   describe "Show one event" do
     it "should show an event an it's attributes" do
-      get api_v1_user_event_path(user_id: @user1.id, id: @event1.id)
+      get api_v1_user_event_path(user_id: @user1.id, id: @event1.id), headers: { 'Authorization' => "Bearer #{@token1}" }
 
       event = JSON.parse(response.body, symbolize_names: true)
 
@@ -33,7 +35,7 @@ RSpec.describe "Event endpoints", :type => :request do
     end
 
     it "should give an error if the user id does not exist" do
-    get api_v1_user_event_path(user_id: 9999999, id: @event1.id)
+    get api_v1_user_event_path(user_id: 9999999, id: @event1.id), headers: { 'Authorization' => "Bearer #{@token1}" }
 
     json = JSON.parse(response.body, symbolize_names: true)
 
@@ -42,7 +44,7 @@ RSpec.describe "Event endpoints", :type => :request do
     end
 
     it "should give an error if the event id does not exist" do
-      get api_v1_user_event_path(user_id: @user1.id, id:9999999 )
+      get api_v1_user_event_path(user_id: @user1.id, id:9999999 ), headers: { 'Authorization' => "Bearer #{@token1}" }
 
       json = JSON.parse(response.body, symbolize_names: true)
   
@@ -51,7 +53,7 @@ RSpec.describe "Event endpoints", :type => :request do
     end
 
     it "should give a forbidden error if the user doesn't have access to an event" do
-      get api_v1_user_event_path(user_id: @user1.id, id:@event3.id )
+      get api_v1_user_event_path(user_id: @user1.id, id:@event3.id ), headers: { 'Authorization' => "Bearer #{@token1}" }
 
       json = JSON.parse(response.body, symbolize_names: true)
 
