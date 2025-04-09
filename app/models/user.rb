@@ -23,4 +23,8 @@ class User < ApplicationRecord
     def set_jti
       self.jti ||= SecureRandom.uuid
     end
+
+    def generate_jwt
+      JWT.encode({ user_id: id, exp: 60.days.from_now.to_i }, Rails.application.credentials.secret_key_base)
+    end
 end
