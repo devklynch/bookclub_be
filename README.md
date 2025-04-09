@@ -66,6 +66,45 @@ Status: 201 Created
 }
 ```
 
+#### Create a session (Login)
+
+Request:
+
+```
+POST /api/v1/users/sign_in
+
+Body:
+{
+  "email": "john.doe@example.com",
+  "password": "password"
+}
+
+```
+
+Successful Response:
+
+```
+
+Status: 200 OK
+
+Body: {
+  "token": {user_token},
+}
+
+```
+
+Error Response:
+
+```
+
+Status: 401 Unauthorized
+
+Body: {
+  "message": "Invalid credentials"
+}
+
+```
+
 ### Events
 
 #### Get an event
