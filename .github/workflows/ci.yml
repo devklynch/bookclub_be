@@ -141,6 +141,10 @@ jobs:
         env:
           RAILS_ENV: test
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
+          SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
+        run: |
+          bin/rails db:create db:schema:load
+          bin/rails test
         run: |
           bin/rails db:create db:schema:load
           bin/rails test

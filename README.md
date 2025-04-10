@@ -10,7 +10,7 @@
 
 Things you may want to cover:
 
-- Ruby version
+- Ruby version stuff
 
 - System dependencies
 
