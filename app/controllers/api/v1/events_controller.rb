@@ -14,22 +14,5 @@ class Api::V1::EventsController < ApplicationController
 
   private
 
-  def authenticate_user!
-    token = request.headers['Authorization']&.split(' ')&.last
 
-    if token.present?
-      begin
-        payload = JWT.decode(token, Rails.application.credentials.secret_key_base, true, algorithm: 'HS256').first
-        @current_user = User.find(payload['user_id'])
-      rescue JWT::DecodeError, ActiveRecord::RecordNotFound
-        render json: { error: 'Invalid or expired token' }, status: :unauthorized
-      end
-    else
-      render json: { error: 'Token is missing' }, status: :unauthorized
-    end
-  end
-
-  def current_user
-    @current_user
-  end
 end

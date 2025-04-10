@@ -10,7 +10,7 @@
 
 Things you may want to cover:
 
-- Ruby version
+- Ruby version stuff
 
 - System dependencies
 
@@ -148,6 +148,72 @@ Status: 403 Forbidden
     "errors": [
         {
             "message": "You are not authorized to view this event"
+        }
+    ]
+}
+```
+
+### Polls
+
+#### Get a poll
+
+Request:
+
+```
+GET /api/v1/users/:user_id/polls/poll_id
+
+Headers:
+{
+  "Authorization": "Bearer <your_token_here>"
+}
+```
+
+Successful Response:
+
+```
+Status: 200 OK
+{
+    "data": {
+        "id": "3",
+        "type": "poll",
+        "attributes": {
+            "poll_question": "What book should we read next?",
+            "expiration_date": "2025-04-24T00:00:00.000Z",
+            "book_club_id": 2,
+            "book_club_name": "Essay Enthusiasts",
+            "options": [
+                {
+                    "id": 7,
+                    "option_text": "For a Breath I Tarry",
+                    "additional_info": null,
+                    "votes_count": 3
+                },
+                {
+                    "id": 8,
+                    "option_text": "The Cricket on the Hearth",
+                    "additional_info": null,
+                    "votes_count": 3
+                },
+                {
+                    "id": 9,
+                    "option_text": "Time To Murder And Create",
+                    "additional_info": null,
+                    "votes_count": 3
+                }
+            ]
+        }
+    }
+}
+```
+
+Error Response (user does not have access to event):
+
+```
+Status: 403 Forbidden
+{
+    "errors": [
+        {
+            "message": "You are not authorized to view this poll"
         }
     ]
 }
