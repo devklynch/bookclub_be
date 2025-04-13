@@ -105,6 +105,114 @@ Body: {
 
 ```
 
+### Book Clubs
+
+#### Get a bookclub
+
+Request:
+
+```
+GET /api/v1/users/:user_id/book_clubs/book_club_id
+
+Headers:
+{
+  "Authorization": "Bearer <your_token_here>"
+}
+```
+
+Successful Response:
+
+```
+Status: 200 OK
+{
+    "data": {
+        "id": "2",
+        "type": "book_club",
+        "attributes": {
+            "name": "Essay Enthusiasts",
+            "description": "Et et est natus.",
+            "members": [
+                {
+                    "id": 6,
+                    "user_id": 5,
+                    "email": "alvin@rath-mayer.test",
+                    "display_name": "Msgr. Alfred Lesch"
+                },
+                {
+                    "id": 7,
+                    "user_id": 7,
+                    "email": "noah@durgan.test",
+                    "display_name": "Nickolas Osinski"
+                },
+                {
+                    "id": 8,
+                    "user_id": 3,
+                    "email": "roman_funk@fadel.example",
+                    "display_name": "May Armstrong"
+                },
+                {
+                    "id": 9,
+                    "user_id": 2,
+                    "email": "nigel.breitenberg@lebsack.test",
+                    "display_name": "Eddie Hahn"
+                },
+                {
+                    "id": 10,
+                    "user_id": 1,
+                    "email": "kamilah.schamberger@lueilwitz.test",
+                    "display_name": "Trent Roberts"
+                }
+            ],
+            "events": [
+                {
+                    "id": 3,
+                    "event_name": "Discussion on The Mirror Crack'd from Side to Side",
+                    "event_date": "2025-04-15T00:00:00.000Z",
+                    "location": "Schroederside",
+                    "book": "If I Forget Thee Jerusalem",
+                    "event_notes": "Voluptatem et et molestiae."
+                },
+                {
+                    "id": 4,
+                    "event_name": "Discussion on Ah, Wilderness!",
+                    "event_date": "2025-04-25T00:00:00.000Z",
+                    "location": "Port Reyes",
+                    "book": "Beneath the Bleeding",
+                    "event_notes": "Dolore recusandae quia nobis."
+                }
+            ],
+            "polls": [
+                {
+                    "id": 3,
+                    "poll_question": "What book should we read next?",
+                    "expiration_date": "2025-04-24T00:00:00.000Z",
+                    "book_club_id": 2
+                },
+                {
+                    "id": 4,
+                    "poll_question": "What book should we read next?",
+                    "expiration_date": "2025-04-19T00:00:00.000Z",
+                    "book_club_id": 2
+                }
+            ]
+        }
+    }
+}
+```
+
+Error Response (user does not have access to event):
+
+```
+Status: 403 Forbidden
+{
+    "errors": [
+        {
+            "message": "You are not authorized to view this book club"
+        }
+    ]
+}
+```
+
 ### Events
 
 #### Get an event
