@@ -9,6 +9,7 @@ Rails.application.routes.draw do
       resources :users do
         resources :events, only: [:show] # users/user_id/events/event_id
         resources :polls, only: [:show] # users/user_id/polls/poll_id
+        resources :book_clubs, only: [:show] # users/user_id/book_clubs/book_club_id
       end
     end
   end
