@@ -30,7 +30,6 @@ RSpec.describe "User endpoints", type: :request do
 
       json = JSON.parse(response.body, symbolize_names: true)
 
-      #binding.pry
       expect(response.status).to eq(200)
       expect(json[:data][:id]).to eq(@user1.id.to_s)
       expect(json[:data][:type]).to eq("all_club_data")
@@ -43,7 +42,15 @@ RSpec.describe "User endpoints", type: :request do
       expect(json[:data][:attributes][:active_polls].count).to eq(1)
       expect(json[:data][:attributes][:active_polls][0][:id]).to eq(@poll1.id)
       expect(json[:data][:attributes][:active_polls][0][:question]).to eq(@poll1.poll_question)
+    end
 
+    it "should give an error if the token is not associated with that user" do
+      get all_club_data_api_v1_user_path(id:@user2.id), headers: { 'Authorization' => "Bearer #{@token1}" }
+
+      json = JSON.parse(response.body, symbolize_names: true)
+
+      expect(response).to have_http_status(:forbidden)
+      expect(json[:error]).to eq("You are not authorized to perform this action")
     end
   end
 end
