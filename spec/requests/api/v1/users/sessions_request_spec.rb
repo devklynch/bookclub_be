@@ -17,6 +17,10 @@ RSpec.describe "User Sessions", type: :request do
 
       expect(response).to have_http_status(:ok)
       expect(json[:token]).not_to be_nil
+      expect(json[:user][:data][:id]).to eq(user.id.to_s)
+      expect(json[:user][:data][:attributes][:email]).to eq(user.email)
+      expect(json[:user][:data][:attributes][:display_name]).to eq(user.display_name)
+      expect(json[:user][:data][:attributes][:password]).to be_nil
     end
 
     it "returns an error message" do
@@ -32,7 +36,7 @@ RSpec.describe "User Sessions", type: :request do
       post api_v1_user_session_path, params: { password: user.password }
 
       json = JSON.parse(response.body, symbolize_names: true) 
-      
+
       expect(response).to have_http_status(:bad_request)
       expect(json[:error]).to eq("Email and password are required")
     end

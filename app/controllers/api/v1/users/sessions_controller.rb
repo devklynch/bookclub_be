@@ -19,7 +19,7 @@ module Api
 
           if user&.valid_password?(password)
             token = user.generate_jwt # Ensure this method exists in the User model
-            render json: { token: token }, status: :ok
+            render json: { token: token, user: UserSerializer.new(user)}, status: :ok
           else
             render json: { error: 'Invalid credentials' }, status: :unauthorized
           end
