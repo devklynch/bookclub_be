@@ -105,6 +105,142 @@ Body: {
 
 ```
 
+### Home Page
+
+#### Shows a users clubs, events, and polls
+
+Request:
+
+```
+GET /api/v1/users/:user_id/all_club_data
+
+Headers:
+{
+  "Authorization": "Bearer <your_token_here>"
+}
+```
+
+Successful Response:
+
+```
+Status: 200 OK
+{
+    "data": {
+        "id": "11",
+        "type": "all_club_data",
+        "attributes": {
+            "id": 11,
+            "display_name": "User 1",
+            "book_clubs": [
+                {
+                    "id": 4,
+                    "name": "Book Club 1",
+                    "description": "This is the description for Book Club 1"
+                },
+                {
+                    "id": 5,
+                    "name": "Book Club 2",
+                    "description": "This is the description for Book Club 2"
+                }
+            ],
+            "upcoming_events": [
+                {
+                    "id": 8,
+                    "event_name": "Upcoming Event 1 - Club 1",
+                    "event_date": "2025-09-19T00:00:00.000Z",
+                    "location": "City 1",
+                    "book": "Book 2 for Club 1",
+                    "book_club": {
+                        "id": 4,
+                        "name": "Book Club 1"
+                    }
+                },
+                {
+                    "id": 11,
+                    "event_name": "Upcoming Event 1 - Club 2",
+                    "event_date": "2025-09-19T00:00:00.000Z",
+                    "location": "City 2",
+                    "book": "Book 2 for Club 2",
+                    "book_club": {
+                        "id": 5,
+                        "name": "Book Club 2"
+                    }
+                },
+                {
+                    "id": 9,
+                    "event_name": "Upcoming Event 2 - Club 1",
+                    "event_date": "2025-10-09T00:00:00.000Z",
+                    "location": "City 1",
+                    "book": "Book 3 for Club 1",
+                    "book_club": {
+                        "id": 4,
+                        "name": "Book Club 1"
+                    }
+                },
+                {
+                    "id": 12,
+                    "event_name": "Upcoming Event 2 - Club 2",
+                    "event_date": "2025-10-09T00:00:00.000Z",
+                    "location": "City 2",
+                    "book": "Book 3 for Club 2",
+                    "book_club": {
+                        "id": 5,
+                        "name": "Book Club 2"
+                    }
+                }
+            ],
+            "active_polls": [
+                {
+                    "id": 8,
+                    "question": "Current Poll 1 - Club 1",
+                    "expiration_date": "2025-09-19T00:00:00.000Z",
+                    "book_club": {
+                        "id": 4,
+                        "name": "Book Club 1"
+                    }
+                },
+                {
+                    "id": 11,
+                    "question": "Current Poll 1 - Club 2",
+                    "expiration_date": "2025-09-19T00:00:00.000Z",
+                    "book_club": {
+                        "id": 5,
+                        "name": "Book Club 2"
+                    }
+                },
+                {
+                    "id": 9,
+                    "question": "Current Poll 2 - Club 1",
+                    "expiration_date": "2025-10-09T00:00:00.000Z",
+                    "book_club": {
+                        "id": 4,
+                        "name": "Book Club 1"
+                    }
+                },
+                {
+                    "id": 12,
+                    "question": "Current Poll 2 - Club 2",
+                    "expiration_date": "2025-10-09T00:00:00.000Z",
+                    "book_club": {
+                        "id": 5,
+                        "name": "Book Club 2"
+                    }
+                }
+            ]
+        }
+    }
+}
+```
+
+Error Response (user does not have access to event):
+
+```
+Status: 403 Forbidden
+{
+    "error": "You are not authorized to perform this action"
+}
+```
+
 ### Book Clubs
 
 #### Get a bookclub
