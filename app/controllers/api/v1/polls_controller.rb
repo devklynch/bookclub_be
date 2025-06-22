@@ -6,7 +6,7 @@ class Api::V1::PollsController < ApplicationController
     poll = Poll.find(params[:id])
 
     if user.book_clubs.include?(poll.book_club)
-      render json: PollSerializer.new(poll), status: :ok
+      render json: PollSerializer.new(poll, params: { current_user: current_user }), status: :ok
     else
       render json: ErrorSerializer.format_errors(["You are not authorized to view this poll"]), status: :forbidden
     end
