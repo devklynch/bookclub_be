@@ -24,7 +24,7 @@ class PollSerializer
 
     poll.options.map do |option|
       vote = option.votes.find_by(user: user)
-      vote ? { id: vote.id, option_id: option.id } : nil
+      vote ? { vote_id: vote.id, option_id: option.id } : nil
     end.compact
   end
 end
