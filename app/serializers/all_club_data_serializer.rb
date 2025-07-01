@@ -50,6 +50,7 @@ attribute :active_polls do |user|
       id: poll.id,
       question: poll.poll_question,
       expiration_date: poll.expiration_date,
+      multiple_votes: poll.multiple_votes,
       book_club: {
         id: poll.book_club.id,
         name: poll.book_club.name

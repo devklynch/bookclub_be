@@ -159,6 +159,7 @@ book_clubs.each_with_index do |book_club, i|
     Poll.create!(
       poll_question: "#{poll_data[:question]} - Club #{i + 1}",
       expiration_date: Date.today + poll_data[:days_offset],
+      multiple_votes: true,
       book_club: book_club
     )
   end
