@@ -6,7 +6,7 @@ class Api::V1::EventsController < ApplicationController
     event = Event.find(params[:id])
     
     if user.book_clubs.include?(event.book_club)
-      render json: EventSerializer.new(event), status: :ok
+      render json: EventSerializer.new(event, eventparams: { current_user: current_user }), status: :ok
     else
       render json: ErrorSerializer.format_errors(["You are not authorized to view this event"]), status: :forbidden
     end
