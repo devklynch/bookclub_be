@@ -4,7 +4,8 @@ class EventSerializer
 
     attribute :user_is_attending do |event, params|
         current_user = params[:current_user]
-        event.attendees.exists?(user_id: current_user)
+        attendee = event.attendees.find { |a| a.user_id == current_user.id }
+    attendee&.attending
     end
 
     attribute :attendees do |event|
