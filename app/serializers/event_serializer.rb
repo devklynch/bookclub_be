@@ -11,7 +11,9 @@ class EventSerializer
         event.attendees.map do |attendee|
             {
                 id: attendee.user_id,
-                name: attendee.user.display_name
+                attendee_id: attendee.id,
+                name: attendee.user.display_name,
+                attending: attendee.attending
             }
         end
     end
