@@ -24,12 +24,15 @@ attribute :upcoming_events do |user|
     .order(:event_date)
     .limit(5)
     .map do |event|
+      attendee = event.attendees.find { |a| a.user_id == user.id }
+  
     {
       id: event.id,
       event_name: event.event_name,
       event_date: event.event_date,
       location: event.location,
       book: event.book,
+      attending: attendee&.attending,
       book_club: {
         id: event.book_club.id,
         name: event.book_club.name
