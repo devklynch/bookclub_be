@@ -9,4 +9,14 @@ class Event < ApplicationRecord
     validates :location, presence: true
     validates :book, presence: true, allow_blank: true
     validates :event_notes, presence: true, allow_blank: true
+
+    after_create :add_attendees
+
+    private
+
+    def add_attendees
+        book_club.users.find_each do |user|
+            attendees.create!(user: user, attending: nil)
+        end
+    end
 end

@@ -1,4 +1,5 @@
 class Api::V1::EventsController < ApplicationController
+  skip_before_action :verify_authenticity_token
   before_action :authenticate_user!
 
   def show
@@ -12,7 +13,17 @@ class Api::V1::EventsController < ApplicationController
     end
   end
 
+
+  def create
+    event = Event.create!(event_params)
+      render json: {message: "Hooray"}, status: :created
+  end
+
   private
+
+  def event_params
+    params.require(:event).permit(:event_name, :event_date, :location, :book, :event_notes, :book_club_id)
+  end
 
 
 end

@@ -8,7 +8,7 @@ Rails.application.routes.draw do
 
       resources :users do
         get "all_club_data", on: :member
-        resources :events, only: [:show] do
+        resources :events, only: [:show, :create] do
            resources :attendees, only: [:update]# users/user_id/events/event_id
         end
         resources :polls, only: [:show] do# users/user_id/polls/poll_id
