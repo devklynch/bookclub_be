@@ -26,7 +26,7 @@ class Api::V1::EventsController < ApplicationController
     event = club.events.create!(event_params)
 
 
-      render json: {message: "Hooray"}, status: :created
+      render json: EventSerializer.new(event, params: { current_user: current_user }), status: :ok
   end
 
   private
