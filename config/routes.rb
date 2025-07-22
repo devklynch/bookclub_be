@@ -25,7 +25,7 @@ Rails.application.routes.draw do
           resources :attendees, only: [:update]
         end
 
-          resources :polls, only: [:create, :show]
+          resources :polls, only: [:create, :show, :update]
       end
     end
   end
