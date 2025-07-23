@@ -12,8 +12,8 @@ Rails.application.routes.draw do
         # Only keep user-book_club routes if needed for show
         resources :book_clubs, only: [:show]
 
-        resources :polls, only: [:show] do
-          resources :options, only: [] do
+        resources :polls, only: [:show, :create] do
+          resources :options, only: [:create] do
             resources :votes, only: [:create, :destroy]
           end
         end
@@ -24,6 +24,8 @@ Rails.application.routes.draw do
         resources :events, only: [:create, :show] do
           resources :attendees, only: [:update]
         end
+
+          resources :polls, only: [:create, :show, :update]
       end
     end
   end
