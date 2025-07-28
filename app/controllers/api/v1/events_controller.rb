@@ -29,6 +29,35 @@ class Api::V1::EventsController < ApplicationController
       render json: EventSerializer.new(event, params: { current_user: current_user }), status: :ok
   end
 
+
+  def update
+    book_club = BookClub.find(params[:book_club_id])
+    event = book_club.events.find(params[:id])
+
+    unless book_club.users.include?(current_user)
+      return render json: { errors: ["You are not authorized to update this event"] }, status: :forbidden
+    end
+
+    if event.update(event_params)
+      render json: EventSerializer.new(event, params: { current_user: current_user }), status: :ok
+    else
+      render json: { errors: event.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  #to add destroy, I need to track creator or admin
+  # def destroy
+  #   book_club = BookClub.find(params[:book_club_id])
+  #   event = book_club.events.find(params[:id])
+
+  #   unless book_club.users.include?(current_user)
+  #     return render json: { errors: ["You are not authorized to delete this event"] }, status: :forbidden
+  #   end
+
+  #   event.destroy
+  #   render json: { message: "Event deleted successfully" }, status: :ok
+  # end
+
   private
 
   def event_params

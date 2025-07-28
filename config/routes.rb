@@ -21,7 +21,7 @@ Rails.application.routes.draw do
 
       # Routes for creating and showing events under book clubs
       resources :book_clubs, only: [] do
-        resources :events, only: [:create, :show] do
+        resources :events, only: [:create, :show, :update] do
           resources :attendees, only: [:update]
         end
 
