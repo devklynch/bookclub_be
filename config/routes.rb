@@ -3,7 +3,8 @@ Rails.application.routes.draw do
     namespace :v1 do
       devise_for :users, controllers: {
         sessions: 'api/v1/users/sessions',
-        registrations: 'api/v1/users/registrations'
+        registrations: 'api/v1/users/registrations',
+        passwords: 'api/v1/users/passwords'
       }
 
       resources :users do
@@ -33,4 +34,6 @@ Rails.application.routes.draw do
 
   # Health check route
   get "up" => "rails/health#show", as: :rails_health_check
+
+  # Letter opener doesn't need routes - it opens emails directly in browser
 end
