@@ -53,4 +53,29 @@ RSpec.describe "User endpoints", type: :request do
       expect(json[:error]).to eq("You are not authorized to perform this action")
     end
   end
+
+  describe "Show all book clubs for a user" do
+    it "should show all book clubs that a user is a member of" do
+      get book_clubs_api_v1_user_path(id: @user1.id), headers: { 'Authorization' => "Bearer #{@token1}" }
+
+      json = JSON.parse(response.body, symbolize_names: true)
+
+      expect(response.status).to eq(200)
+      expect(json[:data]).to be_an(Array)
+      expect(json[:data].count).to eq(1)
+      expect(json[:data][0][:id]).to eq(@book_club1.id.to_s)
+      expect(json[:data][0][:type]).to eq("book_club")
+      expect(json[:data][0][:attributes][:name]).to eq(@book_club1.name)
+      expect(json[:data][0][:attributes][:description]).to eq(@book_club1.description)
+    end
+
+    it "should give an error if the token is not associated with that user" do
+      get book_clubs_api_v1_user_path(id: @user2.id), headers: { 'Authorization' => "Bearer #{@token1}" }
+
+      json = JSON.parse(response.body, symbolize_names: true)
+
+      expect(response).to have_http_status(:forbidden)
+      expect(json[:error]).to eq("You are not authorized to perform this action")
+    end
+  end
 end

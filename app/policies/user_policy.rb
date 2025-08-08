@@ -15,4 +15,8 @@ class UserPolicy < ApplicationPolicy
   def all_club_data?
     user.id == record.id
   end
+
+  def book_clubs?
+    user.id == record.id
+  end
 end
