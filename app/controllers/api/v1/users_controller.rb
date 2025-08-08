@@ -16,4 +16,20 @@ class Api::V1::UsersController < ApplicationController
     
     render json: BookClubSerializer.new(user.book_clubs), status: :ok
   end
+
+  def events
+    user = User.find(params[:id])
+    
+    authorize user, :events?
+    
+    upcoming_events = user.events.where('event_date >= ?', Date.current).order(:event_date)
+    past_events = user.events.where('event_date < ?', Date.current).order(event_date: :desc)
+    
+    render json: {
+      data: {
+        upcoming_events: EventSerializer.new(upcoming_events, params: { current_user: current_user }).serializable_hash[:data],
+        past_events: EventSerializer.new(past_events, params: { current_user: current_user }).serializable_hash[:data]
+      }
+    }, status: :ok
+  end
 end

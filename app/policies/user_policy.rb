@@ -19,4 +19,8 @@ class UserPolicy < ApplicationPolicy
   def book_clubs?
     user.id == record.id
   end
+
+  def events?
+    user.id == record.id
+  end
 end

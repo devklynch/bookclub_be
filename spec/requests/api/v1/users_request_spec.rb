@@ -78,4 +78,44 @@ RSpec.describe "User endpoints", type: :request do
       expect(json[:error]).to eq("You are not authorized to perform this action")
     end
   end
+
+  describe "Show all events for a user" do
+    before :each do
+      @event1 = create(:event, event_name: "Book Discussion", event_date: Date.today + 1.week, book_club: @book_club1)
+      @event2 = create(:event, event_name: "Past Meeting", event_date: Date.today - 1.week, book_club: @book_club1)
+      @event3 = create(:event, event_name: "Future Meeting", event_date: Date.today + 2.weeks, book_club: @book_club1)
+      
+      Attendee.create!(user: @user1, event: @event1, attending: true)
+      Attendee.create!(user: @user1, event: @event2, attending: false)
+      Attendee.create!(user: @user1, event: @event3, attending: true)
+    end
+
+    it "should show upcoming and past events for a user" do
+      get events_api_v1_user_path(id: @user1.id), headers: { 'Authorization' => "Bearer #{@token1}" }
+
+      json = JSON.parse(response.body, symbolize_names: true)
+
+      expect(response.status).to eq(200)
+      expect(json[:data][:upcoming_events]).to be_an(Array)
+      expect(json[:data][:past_events]).to be_an(Array)
+      expect(json[:data][:upcoming_events].count).to be >= 2
+      expect(json[:data][:past_events].count).to be >= 1
+      
+      # Check that we have the expected event names in the arrays
+      upcoming_event_names = json[:data][:upcoming_events].map { |event| event[:attributes][:event_name] }
+      past_event_names = json[:data][:past_events].map { |event| event[:attributes][:event_name] }
+      
+      expect(upcoming_event_names).to include("Book Discussion", "Future Meeting")
+      expect(past_event_names).to include("Past Meeting")
+    end
+
+    it "should give an error if the token is not associated with that user" do
+      get events_api_v1_user_path(id: @user2.id), headers: { 'Authorization' => "Bearer #{@token1}" }
+
+      json = JSON.parse(response.body, symbolize_names: true)
+
+      expect(response).to have_http_status(:forbidden)
+      expect(json[:error]).to eq("You are not authorized to perform this action")
+    end
+  end
 end

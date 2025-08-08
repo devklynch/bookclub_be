@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       resources :users do
         get "all_club_data", on: :member
         get "book_clubs", on: :member
+        get "events", on: :member
 
         # Only keep user-book_club routes if needed for show
         resources :book_clubs, only: [:show]
