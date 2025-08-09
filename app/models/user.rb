@@ -10,6 +10,9 @@ class User < ApplicationRecord
 
     has_many :members
     has_many :book_clubs, through: :members
+    
+    has_many :book_club_admins
+    has_many :administered_book_clubs, through: :book_club_admins, source: :book_club
 
     has_many :attendees
     has_many :events, through: :attendees

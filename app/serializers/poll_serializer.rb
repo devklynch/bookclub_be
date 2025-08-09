@@ -27,4 +27,9 @@ class PollSerializer
       vote ? { vote_id: vote.id, option_id: option.id } : nil
     end.compact
   end
+  
+  attribute :user_is_admin do |poll, params|
+    current_user = params[:current_user]
+    poll.book_club.admin?(current_user)
+  end
 end
