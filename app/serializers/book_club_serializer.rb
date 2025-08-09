@@ -1,6 +1,6 @@
 class BookClubSerializer
   include JSONAPI::Serializer
-  attributes :name, :description
+  attributes :id, :name, :description
 
   attribute :members do |book_club|
     book_club.members.map do |member|

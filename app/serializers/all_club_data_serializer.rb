@@ -15,7 +15,7 @@ class AllClubDataSerializer
   end
 end
 
-# Show the first 5 upcoming events associated with the user's book clubs
+# Show the 5 closest upcoming events associated with the user's book clubs
 attribute :upcoming_events do |user|
   Event.joins(book_club: :members)
     .where('events.event_date >= ?', Date.today)
@@ -41,6 +41,7 @@ attribute :upcoming_events do |user|
   end
 end
 
+# Show the 5 polls closest to expiring from the user's book clubs
 attribute :active_polls do |user|
   Poll.joins(:book_club)
       .where('polls.expiration_date >= ?', Date.today)
@@ -51,7 +52,7 @@ attribute :active_polls do |user|
       .map do |poll|
     {
       id: poll.id,
-      question: poll.poll_question,
+      poll_question: poll.poll_question,
       expiration_date: poll.expiration_date,
       multiple_votes: poll.multiple_votes,
       book_club: {
