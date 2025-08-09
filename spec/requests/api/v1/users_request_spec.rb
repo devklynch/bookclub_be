@@ -118,4 +118,40 @@ RSpec.describe "User endpoints", type: :request do
       expect(json[:error]).to eq("You are not authorized to perform this action")
     end
   end
+
+  describe "Show all polls for a user" do
+    before :each do
+      @poll1 = create(:poll, poll_question: "Active Poll", expiration_date: Date.today + 1.week, book_club: @book_club1)
+      @poll2 = create(:poll, poll_question: "Expired Poll", expiration_date: Date.today - 1.week, book_club: @book_club1)
+      @poll3 = create(:poll, poll_question: "Another Active Poll", expiration_date: Date.today + 2.weeks, book_club: @book_club1)
+    end
+
+    it "should show active and expired polls for a user" do
+      get polls_api_v1_user_path(id: @user1.id), headers: { 'Authorization' => "Bearer #{@token1}" }
+
+      json = JSON.parse(response.body, symbolize_names: true)
+
+      expect(response.status).to eq(200)
+      expect(json[:data][:active_polls]).to be_an(Array)
+      expect(json[:data][:expired_polls]).to be_an(Array)
+      expect(json[:data][:active_polls].count).to be >= 2
+      expect(json[:data][:expired_polls].count).to be >= 1
+      
+      # Check that we have the expected poll questions in the arrays
+      active_poll_questions = json[:data][:active_polls].map { |poll| poll[:attributes][:poll_question] }
+      expired_poll_questions = json[:data][:expired_polls].map { |poll| poll[:attributes][:poll_question] }
+      
+      expect(active_poll_questions).to include("Active Poll", "Another Active Poll")
+      expect(expired_poll_questions).to include("Expired Poll")
+    end
+
+    it "should give an error if the token is not associated with that user" do
+      get polls_api_v1_user_path(id: @user2.id), headers: { 'Authorization' => "Bearer #{@token1}" }
+
+      json = JSON.parse(response.body, symbolize_names: true)
+
+      expect(response).to have_http_status(:forbidden)
+      expect(json[:error]).to eq("You are not authorized to perform this action")
+    end
+  end
 end
