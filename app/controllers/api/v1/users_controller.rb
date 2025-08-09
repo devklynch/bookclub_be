@@ -14,7 +14,7 @@ class Api::V1::UsersController < ApplicationController
     
     authorize user, :book_clubs?
     
-    render json: BookClubSerializer.new(user.book_clubs), status: :ok
+    render json: BookClubSerializer.new(user.book_clubs, params: { current_user: current_user }), status: :ok
   end
 
   def events

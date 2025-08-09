@@ -18,4 +18,9 @@ class EventSerializer
             }
         end
     end
+    
+    attribute :user_is_admin do |event, params|
+        current_user = params[:current_user]
+        event.book_club.admin?(current_user)
+    end
 end

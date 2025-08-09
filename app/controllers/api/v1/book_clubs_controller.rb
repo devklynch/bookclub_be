@@ -6,7 +6,7 @@ class Api::V1::BookClubsController < ApplicationController
     user = User.find(params[:user_id])
     book_club = BookClub.find(params[:id])
     if user.book_clubs.include?(book_club)
-      render json: BookClubSerializer.new(book_club), status: :ok
+      render json: BookClubSerializer.new(book_club, params: { current_user: current_user }), status: :ok
     else
       render json: ErrorSerializer.format_errors(["You are not authorized to view this book club"]), status: :forbidden
     end
@@ -17,7 +17,9 @@ class Api::V1::BookClubsController < ApplicationController
     book_club.users << current_user  # Add creator as member
 
     if book_club.save
-      render json: BookClubSerializer.new(book_club), status: :created
+      # Make the creator an admin
+      book_club.book_club_admins.create(user: current_user)
+      render json: BookClubSerializer.new(book_club, params: { current_user: current_user }), status: :created
     else
       render json: ErrorSerializer.format_errors(book_club.errors.full_messages), status: :unprocessable_entity
     end
@@ -26,12 +28,12 @@ class Api::V1::BookClubsController < ApplicationController
   def update
     book_club = BookClub.find(params[:id])
 
-    unless book_club.users.include?(current_user)
-      return render json: ErrorSerializer.format_errors(["Not authorized"]), status: :forbidden
+    unless book_club.admin?(current_user)
+      return render json: ErrorSerializer.format_errors(["Only admins can edit book clubs"]), status: :forbidden
     end
 
     if book_club.update(book_club_params)
-      render json: BookClubSerializer.new(book_club), status: :ok
+      render json: BookClubSerializer.new(book_club, params: { current_user: current_user }), status: :ok
     else
       render json: ErrorSerializer.format_errors(book_club.errors.full_messages), status: :unprocessable_entity
     end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_19_171341) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_09_154932) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -22,6 +22,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_19_171341) do
     t.datetime "updated_at", null: false
     t.index ["event_id"], name: "index_attendees_on_event_id"
     t.index ["user_id"], name: "index_attendees_on_user_id"
+  end
+
+  create_table "book_club_admins", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "book_club_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["book_club_id"], name: "index_book_club_admins_on_book_club_id"
+    t.index ["user_id"], name: "index_book_club_admins_on_user_id"
   end
 
   create_table "book_clubs", force: :cascade do |t|
@@ -97,6 +106,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_19_171341) do
 
   add_foreign_key "attendees", "events"
   add_foreign_key "attendees", "users"
+  add_foreign_key "book_club_admins", "book_clubs"
+  add_foreign_key "book_club_admins", "users"
   add_foreign_key "events", "book_clubs"
   add_foreign_key "members", "book_clubs"
   add_foreign_key "members", "users"

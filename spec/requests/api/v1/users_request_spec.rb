@@ -41,7 +41,7 @@ RSpec.describe "User endpoints", type: :request do
       expect(json[:data][:attributes][:upcoming_events]).to eq([])
       expect(json[:data][:attributes][:active_polls].count).to eq(1)
       expect(json[:data][:attributes][:active_polls][0][:id]).to eq(@poll1.id)
-      expect(json[:data][:attributes][:active_polls][0][:question]).to eq(@poll1.poll_question)
+      expect(json[:data][:attributes][:active_polls][0][:poll_question]).to eq(@poll1.poll_question)
     end
 
     it "should give an error if the token is not associated with that user" do

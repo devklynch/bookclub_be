@@ -15,6 +15,11 @@ class Api::V1::PollsController < ApplicationController
 
   def create
     book_club = BookClub.find(params[:book_club_id])
+    
+    unless book_club.admin?(current_user)
+      return render json: { errors: ["Only admins can create polls for this book club"] }, status: :forbidden
+    end
+    
     poll = book_club.polls.new(poll_create_params)
     if poll.save
       render json: PollSerializer.new(poll, params: { current_user: current_user }), status: :created
@@ -26,6 +31,10 @@ class Api::V1::PollsController < ApplicationController
   def update
     book_club = BookClub.find(params[:book_club_id])
     poll = book_club.polls.find(params[:id])
+
+    unless book_club.admin?(current_user)
+      return render json: { errors: ["Only admins can update polls for this book club"] }, status: :forbidden
+    end
 
     if poll.update(poll_update_params)
       handle_option_updates(poll, params[:poll][:options]) if params[:poll][:options]

@@ -9,9 +9,15 @@ class BookClubSerializer
         user_id: member.user_id,
         email: member.user.email,
         display_name: member.user.display_name
-    }
+      }
+    end
   end
-end
+  
+  attribute :user_is_admin do |book_club, params|
+    current_user = params[:current_user]
+    book_club.admin?(current_user)
+  end
+  
   attribute :events do |book_club|
     book_club.events.map do |event|
       {
@@ -24,6 +30,7 @@ end
       }
     end
   end
+  
   attribute :polls do |book_club|
     book_club.polls.map do |poll|
       {

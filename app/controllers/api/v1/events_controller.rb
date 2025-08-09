@@ -20,13 +20,12 @@ class Api::V1::EventsController < ApplicationController
   def create
     club = BookClub.find(params[:book_club_id])
 
-    unless club.users.include?(current_user)
-      return render json: { errors: ["You are not authorized to create events for this book club"] }, status: :forbidden
+    unless club.admin?(current_user)
+      return render json: { errors: ["Only admins can create events for this book club"] }, status: :forbidden
     end
     event = club.events.create!(event_params)
 
-
-      render json: EventSerializer.new(event, params: { current_user: current_user }), status: :ok
+    render json: EventSerializer.new(event, params: { current_user: current_user }), status: :ok
   end
 
 
@@ -34,8 +33,8 @@ class Api::V1::EventsController < ApplicationController
     book_club = BookClub.find(params[:book_club_id])
     event = book_club.events.find(params[:id])
 
-    unless book_club.users.include?(current_user)
-      return render json: { errors: ["You are not authorized to update this event"] }, status: :forbidden
+    unless book_club.admin?(current_user)
+      return render json: { errors: ["Only admins can update events for this book club"] }, status: :forbidden
     end
 
     if event.update(event_params)
