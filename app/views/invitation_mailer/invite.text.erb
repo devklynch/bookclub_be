@@ -1,0 +1,35 @@
+Book Club Invitation
+====================
+
+Hello!
+
+<%= @invited_by.email %> has invited you to join their book club:
+
+<%= @book_club.name %>
+<% if @book_club.description.present? %>
+<%= @book_club.description %>
+<% end %>
+
+<% if @existing_user %>
+Since you already have an account, you can join this book club right away!
+
+Accept your invitation here:
+<%= accept_invitation_url(@invitation.token) %>
+
+<% else %>
+This is a great opportunity to join our book club community! You'll need to create an account first, then you can join the book club.
+
+Create your account and join here:
+<%= new_user_registration_url(invitation_token: @invitation.token) %>
+
+What happens next?
+1. Click the link above to create your account
+2. You'll be automatically added to the book club
+3. Start participating in discussions and events!
+<% end %>
+
+This invitation expires in 7 days.
+
+If you have any questions, please contact <%= @invited_by.email %>
+
+Happy reading! 📖

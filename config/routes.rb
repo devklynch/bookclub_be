@@ -29,8 +29,13 @@ Rails.application.routes.draw do
           resources :attendees, only: [:update]
         end
 
-          resources :polls, only: [:create, :show, :update]
+        resources :polls, only: [:create, :show, :update]
+        resources :invitations, only: [:create, :index]
       end
+      
+      # Public invitation routes (no authentication required for these)
+      get 'invitations/:token/accept', to: 'invitations#accept', as: :accept_invitation
+      get 'invitations/:token/decline', to: 'invitations#decline', as: :decline_invitation
     end
   end
 

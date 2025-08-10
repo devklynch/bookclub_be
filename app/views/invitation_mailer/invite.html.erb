@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background-color: #058789; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+    .content { background-color: #f0ecc9; padding: 30px; border-radius: 0 0 8px 8px; }
+    .button { display: inline-block; background-color: #058789; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 20px 0; }
+    .footer { text-align: center; margin-top: 30px; color: #666; font-size: 14px; }
+    .highlight { background-color: #e3a72f; padding: 15px; border-radius: 6px; margin: 20px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📚 Book Club Invitation</h1>
+    </div>
+    
+    <div class="content">
+      <h2>Hello!</h2>
+      
+      <p><strong><%= @invited_by.email %></strong> has invited you to join their book club:</p>
+      
+      <div class="highlight">
+        <h3><%= @book_club.name %></h3>
+        <% if @book_club.description.present? %>
+          <p><%= @book_club.description %></p>
+        <% end %>
+      </div>
+      
+      <% if @existing_user %>
+        <!-- Existing user -->
+        <p>Since you already have an account, you can join this book club right away!</p>
+        
+        <a href="<%= accept_invitation_url(@invitation.token) %>" class="button">
+          Accept Invitation & Join Book Club
+        </a>
+        
+        <p><small>Or copy this link: <%= accept_invitation_url(@invitation.token) %></small></p>
+        
+      <% else %>
+        <!-- New user -->
+        <p>This is a great opportunity to join our book club community! You'll need to create an account first, then you can join the book club.</p>
+        
+        <a href="<%= new_user_registration_url(invitation_token: @invitation.token) %>" class="button">
+          Create Account & Join Book Club
+        </a>
+        
+        <p><small>Or copy this link: <%= new_user_registration_url(invitation_token: @invitation.token) %></small></p>
+        
+        <p><strong>What happens next?</strong></p>
+        <ol>
+          <li>Click the button above to create your account</li>
+          <li>You'll be automatically added to the book club</li>
+          <li>Start participating in discussions and events!</li>
+        </ol>
+      <% end %>
+      
+      <p><strong>This invitation expires in 7 days.</strong></p>
+      
+      <div class="footer">
+        <p>If you have any questions, please contact <%= @invited_by.email %></p>
+        <p>Happy reading! 📖</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
