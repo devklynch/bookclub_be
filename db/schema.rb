@@ -52,6 +52,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_09_154932) do
     t.index ["book_club_id"], name: "index_events_on_book_club_id"
   end
 
+  create_table "invitations", force: :cascade do |t|
+    t.bigint "book_club_id", null: false
+    t.bigint "invited_by_id", null: false
+    t.string "email", null: false
+    t.string "status", default: "pending"
+    t.string "token", null: false
+    t.datetime "accepted_at"
+    t.datetime "declined_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["book_club_id", "email"], name: "index_invitations_on_book_club_id_and_email", unique: true
+    t.index ["book_club_id"], name: "index_invitations_on_book_club_id"
+    t.index ["email"], name: "index_invitations_on_email"
+    t.index ["invited_by_id"], name: "index_invitations_on_invited_by_id"
+    t.index ["status"], name: "index_invitations_on_status"
+    t.index ["token"], name: "index_invitations_on_token", unique: true
+  end
+
   create_table "members", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "book_club_id", null: false
@@ -109,6 +127,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_09_154932) do
   add_foreign_key "book_club_admins", "book_clubs"
   add_foreign_key "book_club_admins", "users"
   add_foreign_key "events", "book_clubs"
+  add_foreign_key "invitations", "book_clubs"
+  add_foreign_key "invitations", "users", column: "invited_by_id"
   add_foreign_key "members", "book_clubs"
   add_foreign_key "members", "users"
   add_foreign_key "options", "polls"

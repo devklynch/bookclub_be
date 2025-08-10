@@ -14,15 +14,21 @@ class Api::V1::BookClubsController < ApplicationController
   
   def create
     book_club = BookClub.new(book_club_params)
-    book_club.users << current_user  # Add creator as member
-
-    if book_club.save
-      # Make the creator an admin
-      book_club.book_club_admins.create(user: current_user)
-      render json: BookClubSerializer.new(book_club, params: { current_user: current_user }), status: :created
-    else
-      render json: ErrorSerializer.format_errors(book_club.errors.full_messages), status: :unprocessable_entity
+    
+    ActiveRecord::Base.transaction do
+      if book_club.save
+        # Add creator as member
+        book_club.users << current_user
+        # Make the creator an admin
+        book_club.book_club_admins.create!(user: current_user)
+        
+        render json: BookClubSerializer.new(book_club, params: { current_user: current_user }), status: :created
+      else
+        render json: ErrorSerializer.format_errors(book_club.errors.full_messages), status: :unprocessable_entity
+      end
     end
+  rescue ActiveRecord::RecordInvalid => e
+    render json: ErrorSerializer.format_errors([e.message]), status: :unprocessable_entity
   end
 
   def update
