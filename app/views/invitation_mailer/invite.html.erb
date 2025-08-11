@@ -34,21 +34,21 @@
         <!-- Existing user -->
         <p>Since you already have an account, you can join this book club right away!</p>
         
-        <a href="<%= accept_invitation_url(@invitation.token) %>" class="button">
+        <a href="http://localhost:3000/api/v1/invitations/<%= @invitation.token %>/accept" class="button">
           Accept Invitation & Join Book Club
         </a>
         
-        <p><small>Or copy this link: <%= accept_invitation_url(@invitation.token) %></small></p>
+        <p><small>Or copy this link: http://localhost:3000/api/v1/invitations/<%= @invitation.token %>/accept</small></p>
         
       <% else %>
         <!-- New user -->
         <p>This is a great opportunity to join our book club community! You'll need to create an account first, then you can join the book club.</p>
         
-        <a href="<%= new_user_registration_url(invitation_token: @invitation.token) %>" class="button">
+        <a href="http://localhost:5173/create_account?invitation_token=<%= @invitation.token %>" class="button">
           Create Account & Join Book Club
         </a>
         
-        <p><small>Or copy this link: <%= new_user_registration_url(invitation_token: @invitation.token) %></small></p>
+        <p><small>Or copy this link: http://localhost:5173/create_account?invitation_token=<%= @invitation.token %></small></p>
         
         <p><strong>What happens next?</strong></p>
         <ol>
