@@ -2,7 +2,7 @@ class PollSerializer
 
 #add a way to show the book club name in the poll serializer
   include JSONAPI::Serializer
-  attributes :poll_question, :expiration_date, :book_club_id, :multiple_votes
+  attributes :poll_question, :expiration_date, :book_club_id, :multiple_votes, :expired, :accepting_votes
 
   attribute :book_club_name do |poll|
     poll.book_club.name
