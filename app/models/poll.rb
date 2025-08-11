@@ -7,4 +7,21 @@ class Poll < ApplicationRecord
     validates :poll_question, presence: true
     validates :expiration_date, presence: true
     validates :multiple_votes, inclusion: {in:[true,false]}
+    
+    def expired?
+      expiration_date < Time.current
+    end
+    
+    def accepting_votes?
+      !expired?
+    end
+    
+    # Serializer methods
+    def expired
+      expired?
+    end
+    
+    def accepting_votes
+      accepting_votes?
+    end
 end
