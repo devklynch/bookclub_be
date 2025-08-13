@@ -24,13 +24,16 @@ Devise.setup do |config|
   # Configure the e-mail address which will be shown in Devise::Mailer,
   # note that it will be overwritten if you use your own mailer class
   # with default "from" parameter.
-  config.mailer_sender = 'please-change-me-at-config-initializers-devise@example.com'
+  config.mailer_sender = Rails.application.credentials.gmail[:username]
 
   # Configure the class responsible to send e-mails.
-  # config.mailer = 'CustomMailer'
+  config.mailer = 'CustomDeviseMailer'
 
   # Configure the parent class responsible to send e-mails.
   # config.parent_mailer = 'ActionMailer::Base'
+  
+  # Set the default URL options for Devise mailer
+  # config.default_url_options = { host: 'localhost', port: 5173 }
 
   # ==> ORM configuration
   # Load and configure the ORM. Supports :active_record (default) and

@@ -25,8 +25,9 @@ class User < ApplicationRecord
     validates :display_name, presence: true, allow_blank: false,
               length: { minimum: 2, maximum: 50, message: "must be between 2 and 50 characters" }
     validates :password, presence: { require: true },
-              length: { minimum: 6, message: "must be at least 6 characters long" }
-    validate :password_complexity
+              length: { minimum: 6, message: "must be at least 6 characters long" },
+              unless: :reset_password_token_present?
+    validate :password_complexity, unless: :reset_password_token_present?
 
     def set_jti
       self.jti ||= SecureRandom.uuid
@@ -34,6 +35,10 @@ class User < ApplicationRecord
 
     def generate_jwt
       JWT.encode({ user_id: id, exp: 60.days.from_now.to_i }, Rails.application.credentials.secret_key_base)
+    end
+
+    def reset_password_token_present?
+      reset_password_token.present?
     end
 
     private
