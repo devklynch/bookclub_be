@@ -2,7 +2,7 @@ module Api
   module V1
     class InvitationsController < ApplicationController
       skip_before_action :verify_authenticity_token
-      before_action :authenticate_user!
+      before_action :authenticate_user!, only: [:create, :index]
       before_action :set_book_club, only: [:create, :index]
       before_action :ensure_admin, only: [:create, :index]
       before_action :set_invitation, only: [:accept, :decline]
@@ -34,24 +34,31 @@ module Api
       end
 
       def accept
+        # For unauthenticated users, we'll redirect to frontend
+        unless current_user
+          redirect_to "http://localhost:5173/invitation-accepted?token=#{@invitation.token}&book_club=#{@invitation.book_club.name}"
+          return
+        end
+        
+        Rails.logger.info "Processing invitation acceptance for user #{current_user.id} in book club #{@invitation.book_club.id}"
+        
         if @invitation.accept!(current_user)
           # Send welcome email
           InvitationMailer.invitation_accepted(@invitation).deliver_later
           
-          render json: {
-            message: "Successfully joined #{@invitation.book_club.name}!",
-            book_club: BookClubSerializer.new(@invitation.book_club, params: { current_user: current_user })
-          }
+          Rails.logger.info "Invitation accepted successfully for user #{current_user.id}"
+          redirect_to "http://localhost:5173/invitation-accepted?token=#{@invitation.token}&book_club=#{@invitation.book_club.name}"
         else
-          render json: { errors: ["Unable to accept invitation"] }, status: :unprocessable_entity
+          Rails.logger.error "Failed to accept invitation for user #{current_user.id}"
+          redirect_to "http://localhost:5173/invitation-error?error=Unable to accept invitation"
         end
       end
 
       def decline
         if @invitation.decline!
-          render json: { message: "Invitation declined" }
+          redirect_to "http://localhost:5173/invitation-declined?book_club=#{@invitation.book_club.name}"
         else
-          render json: { errors: ["Unable to decline invitation"] }, status: :unprocessable_entity
+          redirect_to "http://localhost:5173/invitation-error?error=Unable to decline invitation"
         end
       end
 

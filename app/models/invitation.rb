@@ -26,8 +26,16 @@ class Invitation < ApplicationRecord
     
     transaction do
       update!(status: 'accepted')
-      book_club.members.create!(user: user)
+      
+      # Check if user is already a member
+      unless book_club.users.include?(user)
+        book_club.members.create!(user: user)
+      end
     end
+  rescue => e
+    Rails.logger.error "Failed to accept invitation: #{e.message}"
+    Rails.logger.error "User: #{user.id}, Book Club: #{book_club.id}"
+    false
   end
   
   def decline!

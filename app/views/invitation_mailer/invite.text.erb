@@ -14,13 +14,13 @@ Hello!
 Since you already have an account, you can join this book club right away!
 
 Accept your invitation here:
-<%= accept_invitation_url(@invitation.token) %>
+http://localhost:3000/api/v1/invitations/<%= @invitation.token %>/accept
 
 <% else %>
 This is a great opportunity to join our book club community! You'll need to create an account first, then you can join the book club.
 
 Create your account and join here:
-<%= new_user_registration_url(invitation_token: @invitation.token) %>
+http://localhost:5173/create_account?invitation_token=<%= @invitation.token %>
 
 What happens next?
 1. Click the link above to create your account

@@ -14,13 +14,19 @@ module Api
           @user = User.new(user_params)
           
           if @user.save
+            # Process invitation if present
+            invitation_token = params[:invitation_token]
+            if invitation_token
+              process_invitation(invitation_token, @user)
+            end
+            
             # Generate JWT token for immediate authentication
             token = @user.generate_jwt
             
             render json: {
               user: UserSerializer.new(@user),
               token: token,
-              message: "User account created successfully"
+              message: invitation_token ? "Account created and invitation accepted!" : "User account created successfully"
             }, status: :created
           else
             render json: ErrorSerializer.format_errors(@user.errors.full_messages), status: :unprocessable_entity
@@ -39,6 +45,16 @@ module Api
           user_params[:password].blank? || 
           user_params[:password_confirmation].blank? || 
           user_params[:display_name].blank?
+        end
+
+        def process_invitation(token, user)
+          invitation = Invitation.find_by(token: token, status: 'pending')
+          
+          if invitation && invitation.can_be_accepted?
+            invitation.accept!(user)
+          end
+        rescue => e
+          Rails.logger.error "Failed to process invitation: #{e.message}"
         end
       end
     end
