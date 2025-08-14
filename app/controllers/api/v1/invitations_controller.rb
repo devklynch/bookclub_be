@@ -11,10 +11,9 @@ module Api
         @invitation = @book_club.invitations.build(invitation_params)
         @invitation.invited_by = current_user
 
-        Rails.logger.info "Creating invitation: #{@invitation.attributes}"
-        Rails.logger.info "Current user: #{current_user.id}"
-        Rails.logger.info "Book club: #{@book_club.id}"
-        Rails.logger.info "Is admin? #{@book_club.admin?(current_user)}"
+        Rails.logger.info "Creating invitation for email: #{@invitation.email}"
+        Rails.logger.info "Invitation created by authenticated user"
+        Rails.logger.info "Book club invitation created successfully"
 
         if @invitation.save
           render json: {
@@ -23,7 +22,7 @@ module Api
           }, status: :created
         else
           Rails.logger.error "Invitation validation errors: #{@invitation.errors.full_messages}"
-          Rails.logger.error "Invitation errors details: #{@invitation.errors.details}"
+          Rails.logger.error "Invitation creation failed"
           render json: { errors: @invitation.errors.full_messages }, status: :unprocessable_entity
         end
       end
@@ -40,16 +39,16 @@ module Api
           return
         end
         
-        Rails.logger.info "Processing invitation acceptance for user #{current_user.id} in book club #{@invitation.book_club.id}"
+        Rails.logger.info "Processing invitation acceptance for authenticated user"
         
         if @invitation.accept!(current_user)
           # Send welcome email
           InvitationMailer.invitation_accepted(@invitation).deliver_later
           
-          Rails.logger.info "Invitation accepted successfully for user #{current_user.id}"
+          Rails.logger.info "Invitation accepted successfully"
           redirect_to "#{Rails.application.config.x.frontend_url}/invitation-accepted?token=#{@invitation.token}&book_club=#{@invitation.book_club.name}"
         else
-          Rails.logger.error "Failed to accept invitation for user #{current_user.id}"
+          Rails.logger.error "Failed to accept invitation"
           redirect_to "#{Rails.application.config.x.frontend_url}/invitation-error?error=Unable to accept invitation"
         end
       end
@@ -73,9 +72,8 @@ module Api
       end
 
       def ensure_admin
-        Rails.logger.info "Checking admin status for user #{current_user.id} in book club #{@book_club.id}"
-        Rails.logger.info "Book club admins: #{@book_club.admins.pluck(:id)}"
-        Rails.logger.info "Is admin? #{@book_club.admin?(current_user)}"
+        Rails.logger.info "Checking admin status for user in book club"
+        Rails.logger.info "Admin verification completed"
         
         unless @book_club.admin?(current_user)
           render json: { errors: ["Only book club admins can manage invitations"] }, status: :forbidden
