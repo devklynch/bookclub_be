@@ -36,7 +36,7 @@ module Api
       def accept
         # For unauthenticated users, we'll redirect to frontend
         unless current_user
-          redirect_to "http://localhost:5173/invitation-accepted?token=#{@invitation.token}&book_club=#{@invitation.book_club.name}"
+          redirect_to "#{Rails.application.config.x.frontend_url}/invitation-accepted?token=#{@invitation.token}&book_club=#{@invitation.book_club.name}"
           return
         end
         
@@ -47,18 +47,18 @@ module Api
           InvitationMailer.invitation_accepted(@invitation).deliver_later
           
           Rails.logger.info "Invitation accepted successfully for user #{current_user.id}"
-          redirect_to "http://localhost:5173/invitation-accepted?token=#{@invitation.token}&book_club=#{@invitation.book_club.name}"
+          redirect_to "#{Rails.application.config.x.frontend_url}/invitation-accepted?token=#{@invitation.token}&book_club=#{@invitation.book_club.name}"
         else
           Rails.logger.error "Failed to accept invitation for user #{current_user.id}"
-          redirect_to "http://localhost:5173/invitation-error?error=Unable to accept invitation"
+          redirect_to "#{Rails.application.config.x.frontend_url}/invitation-error?error=Unable to accept invitation"
         end
       end
 
       def decline
         if @invitation.decline!
-          redirect_to "http://localhost:5173/invitation-declined?book_club=#{@invitation.book_club.name}"
+          redirect_to "#{Rails.application.config.x.frontend_url}/invitation-declined?book_club=#{@invitation.book_club.name}"
         else
-          redirect_to "http://localhost:5173/invitation-error?error=Unable to decline invitation"
+          redirect_to "#{Rails.application.config.x.frontend_url}/invitation-error?error=Unable to decline invitation"
         end
       end
 
