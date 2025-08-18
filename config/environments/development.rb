@@ -3,6 +3,33 @@ require "active_support/core_ext/integer/time"
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+  # In development, any application errors are displayed in the browser
+  # and an error page is shown for missing translations.
+  # config.action_view.raise_on_missing_translations = true
+
+  # Enable mailer delivery errors for debugging
+  config.action_mailer.raise_delivery_errors = true
+
+  # Set localhost to be used by links generated in mailer templates.
+  config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+
+  # For development, use Gmail SMTP to send real emails
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    # Gmail SMTP configuration
+    address: 'smtp.gmail.com',
+    port: 587,
+    user_name: Rails.application.credentials.gmail[:username],
+    password: Rails.application.credentials.gmail[:password],
+    authentication: 'plain',
+    enable_starttls_auto: true,
+    domain: 'localhost',
+  }
+
+  # Override default URL configurations for development
+  config.x.api_base_url = 'http://localhost:3000'
+  config.x.frontend_url = 'http://localhost:5173'
+
   # Make code changes take effect immediately without server restart.
   config.enable_reloading = true
 
@@ -31,29 +58,8 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
-  # Enable mailer delivery errors for debugging
-  config.action_mailer.raise_delivery_errors = false
-
   # Make template changes take effect immediately.
   config.action_mailer.perform_caching = false
-
-  # Set localhost to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
-
-  # For development, use Gmail SMTP to send real emails
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.perform_deliveries = true
-  
-  # Gmail SMTP configuration
-  config.action_mailer.smtp_settings = {
-    address: 'smtp.gmail.com',
-    port: 587,
-    domain: 'localhost',
-    user_name: Rails.application.credentials.gmail[:username],
-    password: Rails.application.credentials.gmail[:password],
-    authentication: 'plain',
-    enable_starttls_auto: true
-  }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
