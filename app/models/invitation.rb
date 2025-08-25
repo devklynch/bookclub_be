@@ -2,7 +2,12 @@ class Invitation < ApplicationRecord
   belongs_to :book_club
   belongs_to :invited_by, class_name: 'User'
   
-  validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
+  before_validation :normalize_email
+  
+  validates :email, presence: true, 
+            format: { with: URI::MailTo::EMAIL_REGEXP, message: "must be a valid email address" },
+            length: { maximum: 254, message: "is too long (maximum is 254 characters)" },
+            format: { without: /\s/, message: "cannot contain spaces" }
   validates :status, inclusion: { in: %w[pending accepted declined expired] }
   validates :email, uniqueness: { scope: :book_club_id, message: "has already been invited to this book club" }
   
@@ -47,6 +52,10 @@ class Invitation < ApplicationRecord
   def set_defaults
     self.status ||= 'pending'
     self.token ||= SecureRandom.urlsafe_base64(32)
+  end
+
+  def normalize_email
+    self.email = email.downcase.strip if email.present?
   end
   
   def send_invitation_email

@@ -7,6 +7,7 @@ class User < ApplicationRecord
   :jwt_authenticatable, jwt_revocation_strategy: Devise::JWT::RevocationStrategies::JTIMatcher
   before_validation :set_jti, on: :create
   before_validation :normalize_email
+  before_validation :sanitize_display_name
 
     has_many :members
     has_many :book_clubs, through: :members
@@ -21,9 +22,11 @@ class User < ApplicationRecord
     has_many :options, through: :votes
 
     validates :email, presence: true, uniqueness: true, 
-              format: { with: URI::MailTo::EMAIL_REGEXP, message: "must be a valid email address" }
+              format: { with: URI::MailTo::EMAIL_REGEXP, message: "must be a valid email address" },
+              length: { maximum: 254, message: "is too long (maximum is 254 characters)" }
     validates :display_name, presence: true, allow_blank: false,
-              length: { minimum: 2, maximum: 50, message: "must be between 2 and 50 characters" }
+              length: { minimum: 2, maximum: 50, message: "must be between 2 and 50 characters" },
+              format: { without: /[<>]/, message: "cannot contain HTML tags" }
     validates :password, presence: { require: true },
               length: { minimum: 6, message: "must be at least 6 characters long" },
               unless: :reset_password_token_present?
@@ -34,7 +37,7 @@ class User < ApplicationRecord
     end
 
     def generate_jwt
-      JWT.encode({ user_id: id, exp: 60.days.from_now.to_i }, Rails.application.credentials.secret_key_base)
+      JWT.encode({ user_id: id, exp: 24.hours.from_now.to_i }, Rails.application.credentials.secret_key_base)
     end
 
     def reset_password_token_present?
@@ -45,6 +48,10 @@ class User < ApplicationRecord
 
     def normalize_email
       self.email = email.downcase.strip if email.present?
+    end
+
+    def sanitize_display_name
+      self.display_name = display_name&.strip&.gsub(/\s+/, ' ') if display_name.present?
     end
 
     def password_complexity
