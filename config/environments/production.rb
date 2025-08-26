@@ -100,11 +100,11 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   # Use environment variables for production URLs
-  config.x.api_base_url = ENV.fetch('API_BASE_URL', 'https://your-app-name.onrender.com')
-  config.x.frontend_url = ENV.fetch('FRONTEND_URL', 'https://your-frontend-url.com')
+  config.x.api_base_url = ENV.fetch('API_BASE_URL', 'https://bookclub-be-9b4p.onrender.com')
+  config.x.frontend_url = ENV.fetch('FRONTEND_URL', 'https://booked-and-busy-gv5r.onrender.com')
 
   # Configure mailer for production
-  config.action_mailer.default_url_options = { host: ENV.fetch('FRONTEND_URL', 'https://your-frontend-url.com') }
+  config.action_mailer.default_url_options = { host: ENV.fetch('FRONTEND_URL', 'https://booked-and-busy-gv5r.onrender.com') }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
     address: 'smtp.gmail.com',
@@ -113,6 +113,6 @@ Rails.application.configure do
     password: Rails.application.credentials.gmail[:password],
     authentication: 'plain',
     enable_starttls_auto: true,
-    domain: ENV.fetch('FRONTEND_URL', 'https://your-frontend-url.com').gsub(/^https?:\/\//, '')
+    domain: ENV.fetch('FRONTEND_URL', 'https://booked-and-busy-gv5r.onrender.com').gsub(/^https?:\/\//, '')
   }
 end
