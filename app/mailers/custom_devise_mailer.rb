@@ -7,7 +7,7 @@ class CustomDeviseMailer < Devise::Mailer
     # Override the default URL to point to your frontend
     @token = token
     @resource = record
-    @reset_url = "http://localhost:5173/reset_password?reset_password_token=#{token}"
+    @reset_url = "#{Rails.application.config.x.frontend_url}/reset_password?reset_password_token=#{token}"
     
     Rails.logger.info "=== CustomDeviseMailer Debug ==="
     Rails.logger.info "Record ID: #{record.id}"
