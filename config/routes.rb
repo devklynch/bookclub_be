@@ -7,7 +7,7 @@ Rails.application.routes.draw do
         passwords: 'api/v1/users/passwords'
       }
 
-      resources :users do
+      resources :users, only: [:update] do
         get "all_club_data", on: :member
         get "book_clubs", on: :member
         get "events", on: :member

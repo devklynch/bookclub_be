@@ -2,7 +2,7 @@ module Api
   module V1
     module Users
       class SessionsController < Devise::SessionsController
-        skip_before_action :verify_authenticity_token
+        protect_from_forgery with: :null_session
         skip_before_action :verify_signed_out_user, only: [:destroy]
         respond_to :json
         

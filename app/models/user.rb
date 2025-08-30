@@ -28,8 +28,8 @@ class User < ApplicationRecord
               format: { without: /[<>]/, message: "cannot contain HTML tags" }
     validates :password, presence: { require: true },
               length: { minimum: 6, message: "must be at least 6 characters long" },
-              unless: :reset_password_token_present?
-    validate :password_complexity, unless: :reset_password_token_present?
+              unless: :skip_password_validation?
+    validate :password_complexity, unless: :skip_password_validation?
 
     def set_jti
       self.jti ||= SecureRandom.uuid
@@ -46,6 +46,16 @@ class User < ApplicationRecord
 
     def reset_password_token_present?
       reset_password_token.present?
+    end
+
+    def skip_password_validation?
+      # Skip validation during password reset
+      return true if reset_password_token_present?
+      
+      # Skip validation when not changing password (password is blank during update)
+      return true if persisted? && password.blank?
+      
+      false
     end
 
     private
