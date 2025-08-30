@@ -31,7 +31,17 @@ class ApplicationController < ActionController::Base
     if token.present?
       begin
         payload = JWT.decode(token, Rails.application.credentials.secret_key_base, true, algorithm: 'HS256').first
-        @current_user = User.find(payload['user_id'])
+        # Support both old 'user_id' and new 'sub' formats for backward compatibility
+        user_id = payload['sub'] || payload['user_id']
+        user = User.find(user_id)
+        
+        # Check if the token's JTI matches the user's current JTI
+        token_jti = payload['jti']
+        if token_jti && token_jti == user.jti
+          @current_user = user
+        else
+          render json: { error: 'Invalid or expired token' }, status: :unauthorized
+        end
    
       rescue JWT::DecodeError, ActiveRecord::RecordNotFound
         render json: { error: 'Invalid or expired token' }, status: :unauthorized

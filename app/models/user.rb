@@ -3,8 +3,7 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   
   devise :database_authenticatable, :registerable,
-  :recoverable, :rememberable, :validatable,
-  :jwt_authenticatable, jwt_revocation_strategy: Devise::JWT::RevocationStrategies::JTIMatcher
+  :recoverable, :rememberable, :validatable
   before_validation :set_jti, on: :create
   before_validation :normalize_email
   before_validation :sanitize_display_name
@@ -37,7 +36,12 @@ class User < ApplicationRecord
     end
 
     def generate_jwt
-      JWT.encode({ user_id: id, exp: 24.hours.from_now.to_i }, Rails.application.credentials.secret_key_base)
+      JWT.encode({ 
+        sub: id.to_s,
+        jti: jti, 
+        exp: 24.hours.from_now.to_i,
+        aud: 'user'
+      }, Rails.application.credentials.secret_key_base)
     end
 
     def reset_password_token_present?

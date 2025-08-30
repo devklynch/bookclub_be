@@ -3,6 +3,7 @@ module Api
     module Users
       class SessionsController < Devise::SessionsController
         skip_before_action :verify_authenticity_token
+        skip_before_action :verify_signed_out_user, only: [:destroy]
         respond_to :json
         
         def create
@@ -22,6 +23,32 @@ module Api
             render json: { token: token, user: UserSerializer.new(user)}, status: :ok
           else
             render json: { error: 'Invalid credentials' }, status: :unauthorized
+          end
+        end
+
+        def destroy
+          # Extract and validate the JWT token
+          token = request.headers['Authorization']&.split(' ')&.last
+          
+          if token.blank?
+            return render json: { error: 'Token is missing' }, status: :unauthorized
+          end
+          
+          begin
+            # Decode the JWT token using your custom method
+            payload = JWT.decode(token, Rails.application.credentials.secret_key_base, true, algorithm: 'HS256').first
+            # Support both old 'user_id' and new 'sub' formats for backward compatibility
+            user_id = payload['sub'] || payload['user_id']
+            user = User.find(user_id)
+            
+            # Invalidate the user's JTI to revoke all their tokens
+            user.update!(jti: SecureRandom.uuid)
+            
+            render json: { message: 'Logged out successfully' }, status: :ok
+          rescue JWT::DecodeError, ActiveRecord::RecordNotFound
+            render json: { error: 'Invalid or expired token' }, status: :unauthorized
+          rescue => e
+            render json: { error: 'Logout failed' }, status: :unprocessable_entity
           end
         end
 
