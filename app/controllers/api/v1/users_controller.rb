@@ -1,5 +1,41 @@
 class Api::V1::UsersController < ApplicationController
   before_action :authenticate_user!
+  before_action :set_user, only: [:update]
+
+  def update
+    authorize @user, :update?
+
+    # Handle password change separately
+    if user_params[:password].present?
+      unless @user.valid_password?(user_params[:current_password])
+        render json: {
+          error: "Current password is incorrect",
+          errors: { current_password: ["is incorrect"] }
+        }, status: :unprocessable_entity
+        return
+      end
+      
+      # Use regular update when changing password
+      update_params = user_params.except(:current_password)
+      success = @user.update(update_params)
+    else
+      # Use update_without_password when not changing password
+      update_params = user_params.except(:current_password, :password, :password_confirmation)
+      success = @user.update_without_password(update_params)
+    end
+    
+    if success
+      render json: {
+        message: "Profile updated successfully",
+        data: UserSerializer.new(@user).serializable_hash[:data]
+      }, status: :ok
+    else
+      render json: {
+        error: "Failed to update profile",
+        errors: @user.errors.as_json
+      }, status: :unprocessable_entity
+    end
+  end
 
   def all_club_data
     user = User.find(params[:id])
@@ -56,5 +92,15 @@ class Api::V1::UsersController < ApplicationController
         expired_polls: PollSerializer.new(expired_polls, params: { current_user: current_user }).serializable_hash[:data]
       }
     }, status: :ok
+  end
+
+  private
+
+  def set_user
+    @user = User.find(params[:id])
+  end
+
+  def user_params
+    params.require(:user).permit(:email, :display_name, :password, :password_confirmation, :current_password)
   end
 end

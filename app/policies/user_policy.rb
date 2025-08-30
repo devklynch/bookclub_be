@@ -27,4 +27,8 @@ class UserPolicy < ApplicationPolicy
   def polls?
     user.id == record.id
   end
+
+  def update?
+    user.id == record.id
+  end
 end

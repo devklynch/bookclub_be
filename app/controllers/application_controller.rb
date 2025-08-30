@@ -2,6 +2,9 @@ class ApplicationController < ActionController::Base
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
   include Pundit::Authorization
+  
+  # Skip CSRF protection for API endpoints since we use JWT authentication
+  skip_before_action :verify_authenticity_token
 
   rescue_from ActiveRecord::RecordInvalid do |e|
     render json: ErrorSerializer.format_errors(e.record.errors.full_messages), status: :unprocessable_entity
