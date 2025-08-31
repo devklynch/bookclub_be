@@ -5,11 +5,10 @@ module Api
         skip_before_action :verify_signed_out_user, only: [:destroy]
         
         def create
-          # Use strong parameters
+        
           email = sign_in_params[:email]
           password = sign_in_params[:password]
 
-          # Validate presence of email and password
           if email.blank? || password.blank?
             return render json: { error: 'Email and password are required' }, status: :bad_request
           end
@@ -17,7 +16,7 @@ module Api
           user = User.find_for_database_authentication(email: email)
 
           if user&.valid_password?(password)
-            token = user.generate_jwt # Ensure this method exists in the User model
+            token = user.generate_jwt
             render json: { token: token, user: UserSerializer.new(user)}, status: :ok
           else
             render json: { error: 'Invalid credentials' }, status: :unauthorized
