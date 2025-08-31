@@ -1,7 +1,6 @@
 module Api
   module V1
     class InvitationsController < ApplicationController
-      skip_before_action :verify_authenticity_token
       before_action :authenticate_user!, only: [:create, :index]
       before_action :set_book_club, only: [:create, :index]
       before_action :ensure_admin, only: [:create, :index]
