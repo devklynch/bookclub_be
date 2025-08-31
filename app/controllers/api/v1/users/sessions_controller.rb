@@ -2,9 +2,7 @@ module Api
   module V1
     module Users
       class SessionsController < Devise::SessionsController
-        protect_from_forgery with: :null_session
         skip_before_action :verify_signed_out_user, only: [:destroy]
-        respond_to :json
         
         def create
           # Use strong parameters

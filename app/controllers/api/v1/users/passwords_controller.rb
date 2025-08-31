@@ -2,8 +2,6 @@ module Api
   module V1
     module Users
       class PasswordsController < Devise::PasswordsController
-        protect_from_forgery with: :null_session
-        respond_to :json
 
         # POST /api/v1/users/password
         def create

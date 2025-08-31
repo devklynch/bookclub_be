@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   
   # Disable CSRF protection for API endpoints since we use JWT authentication
   protect_from_forgery with: :null_session
+  respond_to :json
 
   rescue_from ActiveRecord::RecordInvalid do |e|
     render json: ErrorSerializer.format_errors(e.record.errors.full_messages), status: :unprocessable_entity
