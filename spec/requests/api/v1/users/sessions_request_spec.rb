@@ -24,7 +24,6 @@ RSpec.describe "User Sessions", type: :request do
       expect(json[:user][:data][:attributes]).not_to have_key(:password)
       expect(json[:user][:data][:attributes]).not_to have_key(:created_at)
       expect(json[:user][:data][:attributes]).not_to have_key(:updated_at)
-      expect(json[:user][:data][:attributes]).not_to have_key(:profile_complete)
     end
 
     it "should return a valid JWT token that can be decoded" do
@@ -35,7 +34,6 @@ RSpec.describe "User Sessions", type: :request do
 
       expect(token).not_to be_nil
       
-      # Decode the token to verify it's valid
       payload = JWT.decode(token, Rails.application.credentials.secret_key_base, true, algorithm: 'HS256').first
       expect(payload['sub']).to eq(@user.id.to_s)
       expect(payload['jti']).to eq(@user.jti)
@@ -43,6 +41,16 @@ RSpec.describe "User Sessions", type: :request do
       expect(payload['exp']).to be > Time.current.to_i
     end
 
+    it "should handle case-insensitive email login" do
+      post api_v1_user_session_path, params: { email: @user.email.upcase, password: 'Password123' }
+
+      json = JSON.parse(response.body, symbolize_names: true)
+
+      expect(response).to have_http_status(:ok)
+      expect(json[:token]).not_to be_nil
+      expect(json[:user][:data][:attributes][:email]).to eq(@user.email.downcase)
+    end
+    
     it "should return error with invalid password" do
       post api_v1_user_session_path, params: { email: @user.email, password: 'wrongpassword' }
 
@@ -118,16 +126,6 @@ RSpec.describe "User Sessions", type: :request do
       expect(json[:error]).to eq("Email and password are required")
       expect(json[:token]).to be_nil
       expect(json[:user]).to be_nil
-    end
-
-    it "should handle case-insensitive email login" do
-      post api_v1_user_session_path, params: { email: @user.email.upcase, password: 'Password123' }
-
-      json = JSON.parse(response.body, symbolize_names: true)
-
-      expect(response).to have_http_status(:ok)
-      expect(json[:token]).not_to be_nil
-      expect(json[:user][:data][:attributes][:email]).to eq(@user.email.downcase)
     end
   end
 

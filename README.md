@@ -75,8 +75,8 @@ POST /api/v1/users/sign_in
 
 Body:
 {
-  "email": "john.doe@example.com",
-  "password": "password"
+  "email": "user@bookclub.com,
+  "password": "passwordTest123"
 }
 
 ```
@@ -88,7 +88,17 @@ Successful Response:
 Status: 200 OK
 
 Body: {
-  "token": {user_token},
+    "token": <token>,
+    "user": {
+        "data": {
+            "id": "1",
+            "type": "user",
+            "attributes": {
+                "email": "user@bookclub.com",
+                "display_name": "John Smith"
+            }
+        }
+    }
 }
 
 ```
@@ -100,7 +110,17 @@ Error Response:
 Status: 401 Unauthorized
 
 Body: {
-  "message": "Invalid credentials"
+  "error": "Invalid credentials"
+}
+
+```
+
+```
+
+Status: 400 Bad Request
+
+Body: {
+  "error": "Email and password are required"
 }
 
 ```
