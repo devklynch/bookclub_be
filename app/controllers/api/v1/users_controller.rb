@@ -1,6 +1,6 @@
 class Api::V1::UsersController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_user, only: [:update]
+  before_action :set_user, only: [:update, :all_club_data, :book_clubs, :events, :polls]
 
   def update
     authorize @user, :update?
@@ -38,11 +38,9 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def all_club_data
-    user = User.find(params[:id])
- 
-    authorize user, :all_club_data?
+    authorize @user, :all_club_data?
 
-    render json: AllClubDataSerializer.new(user), status: :ok
+    render json: AllClubDataSerializer.new(@user), status: :ok
   end
 
   def book_clubs
