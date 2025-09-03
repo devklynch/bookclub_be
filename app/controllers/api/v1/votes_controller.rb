@@ -8,7 +8,7 @@ class Api::V1::VotesController < ApplicationController
 
     # Check if poll is expired before allowing any votes
     if poll.expired?
-      render json: { error: "This poll has expired and is no longer accepting votes." }, status: :unprocessable_entity
+      render json: ErrorSerializer.format_errors(["This poll has expired and is no longer accepting votes."]), status: :unprocessable_entity
       return
     end
 
@@ -19,7 +19,7 @@ class Api::V1::VotesController < ApplicationController
                           .exists?
 
       if already_voted
-        render json: { error: "You can only vote once in this poll." }, status: :unprocessable_entity
+        render json: ErrorSerializer.format_errors(["You can only vote once in this poll."]), status: :unprocessable_entity
         return
       end
     end
@@ -29,7 +29,7 @@ class Api::V1::VotesController < ApplicationController
     if vote.save
       render json: vote, status: :created
     else
-      render json: { errors: vote.errors.full_messages }, status: :unprocessable_entity
+      render json: ErrorSerializer.format_errors(vote.errors.full_messages), status: :unprocessable_entity
     end
   end
 
@@ -39,14 +39,14 @@ class Api::V1::VotesController < ApplicationController
     if vote
       # Check if poll is expired before allowing vote removal
       if vote.option.poll.expired?
-        render json: { error: "Cannot remove votes from an expired poll." }, status: :unprocessable_entity
+        render json: ErrorSerializer.format_errors(["Cannot remove votes from an expired poll."]), status: :unprocessable_entity
         return
       end
       
       vote.destroy
       render json: { message: "Vote removed" }, status: :ok
     else
-      render json: { error: "Vote not found or not authorized" }, status: :not_found
+      render json: ErrorSerializer.format_errors(["Vote not found or not authorized"]), status: :not_found
     end
   end
 end

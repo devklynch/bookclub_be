@@ -17,14 +17,14 @@ class Api::V1::PollsController < ApplicationController
     book_club = BookClub.find(params[:book_club_id])
     
     unless book_club.admin?(current_user)
-      return render json: { errors: ["Only admins can create polls for this book club"] }, status: :forbidden
+      return render json: ErrorSerializer.format_errors(["Only admins can create polls for this book club"]), status: :forbidden
     end
     
     poll = book_club.polls.new(poll_create_params)
     if poll.save
       render json: PollSerializer.new(poll, params: { current_user: current_user }), status: :created
     else
-      render json: { errors: poll.errors.full_messages }, status: :unprocessable_entity
+      render json: ErrorSerializer.format_errors(poll.errors.full_messages), status: :unprocessable_entity
     end
   end
 
@@ -33,14 +33,14 @@ class Api::V1::PollsController < ApplicationController
     poll = book_club.polls.find(params[:id])
 
     unless book_club.admin?(current_user)
-      return render json: { errors: ["Only admins can update polls for this book club"] }, status: :forbidden
+      return render json: ErrorSerializer.format_errors(["Only admins can update polls for this book club"]), status: :forbidden
     end
 
     if poll.update(poll_update_params)
       handle_option_updates(poll, params[:poll][:options]) if params[:poll][:options]
       render json: PollSerializer.new(poll, params: { current_user: current_user }), status: :ok
   else
-    render json: { errors: poll.errors.full_messages }, status: :unprocessable_entity
+    render json: ErrorSerializer.format_errors(poll.errors.full_messages), status: :unprocessable_entity
     end
   end
 

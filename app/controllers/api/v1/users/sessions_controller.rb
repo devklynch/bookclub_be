@@ -2,27 +2,24 @@ module Api
   module V1
     module Users
       class SessionsController < Devise::SessionsController
-        protect_from_forgery with: :null_session
         skip_before_action :verify_signed_out_user, only: [:destroy]
-        respond_to :json
         
         def create
-          # Use strong parameters
+        
           email = sign_in_params[:email]
           password = sign_in_params[:password]
 
-          # Validate presence of email and password
           if email.blank? || password.blank?
-            return render json: { error: 'Email and password are required' }, status: :bad_request
+            return render json: ErrorSerializer.format_errors(['Email and password are required']), status: :bad_request
           end
 
           user = User.find_for_database_authentication(email: email)
 
           if user&.valid_password?(password)
-            token = user.generate_jwt # Ensure this method exists in the User model
+            token = user.generate_jwt
             render json: { token: token, user: UserSerializer.new(user)}, status: :ok
           else
-            render json: { error: 'Invalid credentials' }, status: :unauthorized
+            render json: ErrorSerializer.format_errors(['Invalid credentials']), status: :unauthorized
           end
         end
 
@@ -31,7 +28,7 @@ module Api
           token = request.headers['Authorization']&.split(' ')&.last
           
           if token.blank?
-            return render json: { error: 'Token is missing' }, status: :unauthorized
+            return render json: ErrorSerializer.format_errors(['Token is missing']), status: :unauthorized
           end
           
           begin
@@ -46,9 +43,9 @@ module Api
             
             render json: { message: 'Logged out successfully' }, status: :ok
           rescue JWT::DecodeError, ActiveRecord::RecordNotFound
-            render json: { error: 'Invalid or expired token' }, status: :unauthorized
+            render json: ErrorSerializer.format_errors(['Invalid or expired token']), status: :unauthorized
           rescue => e
-            render json: { error: 'Logout failed' }, status: :unprocessable_entity
+            render json: ErrorSerializer.format_errors(['Logout failed']), status: :unprocessable_entity
           end
         end
 

@@ -83,14 +83,14 @@ RSpec.describe "Poll endpoints", type: :request do
       json = JSON.parse(response.body, symbolize_names: true)
 
       expect(response).to have_http_status(:unauthorized)
-      expect(json[:error]).to eq("Token is missing")
+      expect(json[:errors][0][:message]).to eq("Token is missing")
     end
 
     it "should return an error with an invalid token" do
       get api_v1_user_poll_path(user_id: @user1.id, id: @poll1.id), headers: { 'Authorization' => "Bearer invalid_token" }
       json = JSON.parse(response.body, symbolize_names: true)
       expect(response).to have_http_status(:unauthorized)
-      expect(json[:error]).to eq("Invalid or expired token")
+      expect(json[:errors][0][:message]).to eq("Invalid or expired token")
     end
   end
 end

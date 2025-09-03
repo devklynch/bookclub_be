@@ -2,8 +2,6 @@ module Api
   module V1
     module Users
       class PasswordsController < Devise::PasswordsController
-        protect_from_forgery with: :null_session
-        respond_to :json
 
         # POST /api/v1/users/password
         def create
@@ -55,7 +53,7 @@ module Api
           end
         rescue => e
           Rails.logger.error "Password reset error: #{e.message}"
-          render json: { error: "Failed to send password reset email. Please try again." }, status: :internal_server_error
+          render json: ErrorSerializer.format_errors(["Failed to send password reset email. Please try again."]), status: :internal_server_error
         end
 
         # PUT /api/v1/users/password
@@ -77,7 +75,7 @@ module Api
             render json: { message: "Password reset successfully" }, status: :ok
           else
             # There were validation errors
-            render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
+            render json: ErrorSerializer.format_errors(user.errors.full_messages), status: :unprocessable_entity
           end
         end
 

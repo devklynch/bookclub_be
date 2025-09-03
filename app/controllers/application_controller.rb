@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   
   # Disable CSRF protection for API endpoints since we use JWT authentication
   protect_from_forgery with: :null_session
+  respond_to :json
 
   rescue_from ActiveRecord::RecordInvalid do |e|
     render json: ErrorSerializer.format_errors(e.record.errors.full_messages), status: :unprocessable_entity
@@ -15,7 +16,7 @@ class ApplicationController < ActionController::Base
   end
 
   rescue_from Pundit::NotAuthorizedError do |_exception|
-    render json: { error: 'You are not authorized to perform this action' }, status: :forbidden
+    render json: ErrorSerializer.format_errors(['You are not authorized to perform this action']), status: :forbidden
   end
 
   def render_error
@@ -43,14 +44,14 @@ class ApplicationController < ActionController::Base
         if token_jti && token_jti == user.jti
           @current_user = user
         else
-          render json: { error: 'Invalid or expired token' }, status: :unauthorized
+          render json: ErrorSerializer.format_errors(['Invalid or expired token']), status: :unauthorized
         end
    
       rescue JWT::DecodeError, ActiveRecord::RecordNotFound
-        render json: { error: 'Invalid or expired token' }, status: :unauthorized
+        render json: ErrorSerializer.format_errors(['Invalid or expired token']), status: :unauthorized
       end
     else
-      render json: { error: 'Token is missing' }, status: :unauthorized
+      render json: ErrorSerializer.format_errors(['Token is missing']), status: :unauthorized
     end
   end
 

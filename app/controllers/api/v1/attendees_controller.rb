@@ -10,7 +10,7 @@ class Api::V1::AttendeesController < ApplicationController
     if attendee.update(attendee_params)
       render json: {message: "RSVP updated", attending: attendee.attending}, status: :ok
     else
-      render json: {error: attendee.errors.full_messages}, status: :unprocessable_entity
+      render json: ErrorSerializer.format_errors(attendee.errors.full_messages), status: :unprocessable_entity
     end
   end
 
