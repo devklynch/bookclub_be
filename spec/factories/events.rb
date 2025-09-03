@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :event do
     event_name { "MyString" }
-    event_date { "2025-03-09 11:32:38" }
+    event_date { Date.current + 1.week }
     location { "MyString" }
     book { "MyString" }
     event_notes { "MyString" }

@@ -6,7 +6,7 @@ class Api::V1::EventsController < ApplicationController
     event = Event.find(params[:id])
     
     if event.book_club_id != params[:book_club_id].to_i
-      return render json: { errors: ["Event does not belong to the specified book club"] }, status: :not_found
+      return render json: ErrorSerializer.format_errors(["Event does not belong to the specified book club"]), status: :not_found
     end
 
     unless event.book_club.users.include?(current_user)
@@ -21,7 +21,7 @@ class Api::V1::EventsController < ApplicationController
     club = BookClub.find(params[:book_club_id])
 
     unless club.admin?(current_user)
-      return render json: { errors: ["Only admins can create events for this book club"] }, status: :forbidden
+      return render json: ErrorSerializer.format_errors(["Only admins can create events for this book club"]), status: :forbidden
     end
     event = club.events.create!(event_params)
 
@@ -34,13 +34,13 @@ class Api::V1::EventsController < ApplicationController
     event = book_club.events.find(params[:id])
 
     unless book_club.admin?(current_user)
-      return render json: { errors: ["Only admins can update events for this book club"] }, status: :forbidden
+      return render json: ErrorSerializer.format_errors(["Only admins can update events for this book club"]), status: :forbidden
     end
 
     if event.update(event_params)
       render json: EventSerializer.new(event, params: { current_user: current_user }), status: :ok
     else
-      render json: { errors: event.errors.full_messages }, status: :unprocessable_entity
+      render json: ErrorSerializer.format_errors(event.errors.full_messages), status: :unprocessable_entity
     end
   end
 

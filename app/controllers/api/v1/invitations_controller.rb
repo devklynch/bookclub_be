@@ -22,7 +22,7 @@ module Api
         else
           Rails.logger.error "Invitation validation errors: #{@invitation.errors.full_messages}"
           Rails.logger.error "Invitation creation failed"
-          render json: { errors: @invitation.errors.full_messages }, status: :unprocessable_entity
+          render json: ErrorSerializer.format_errors(@invitation.errors.full_messages), status: :unprocessable_entity
         end
       end
 
@@ -75,7 +75,7 @@ module Api
         Rails.logger.info "Admin verification completed"
         
         unless @book_club.admin?(current_user)
-          render json: { errors: ["Only book club admins can manage invitations"] }, status: :forbidden
+          render json: ErrorSerializer.format_errors(["Only book club admins can manage invitations"]), status: :forbidden
         end
       end
 

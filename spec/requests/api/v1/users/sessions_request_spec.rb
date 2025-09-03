@@ -57,7 +57,7 @@ RSpec.describe "User Sessions", type: :request do
       json = JSON.parse(response.body, symbolize_names: true)
 
       expect(response).to have_http_status(:unauthorized)
-      expect(json[:error]).to eq("Invalid credentials")
+      expect(json[:errors][0][:message]).to eq("Invalid credentials")
       expect(json[:token]).to be_nil
       expect(json[:user]).to be_nil
     end
@@ -68,7 +68,7 @@ RSpec.describe "User Sessions", type: :request do
       json = JSON.parse(response.body, symbolize_names: true)
 
       expect(response).to have_http_status(:unauthorized)
-      expect(json[:error]).to eq("Invalid credentials")
+      expect(json[:errors][0][:message]).to eq("Invalid credentials")
       expect(json[:token]).to be_nil
       expect(json[:user]).to be_nil
     end
@@ -79,7 +79,7 @@ RSpec.describe "User Sessions", type: :request do
       json = JSON.parse(response.body, symbolize_names: true)
 
       expect(response).to have_http_status(:bad_request)
-      expect(json[:error]).to eq("Email and password are required")
+      expect(json[:errors][0][:message]).to eq("Email and password are required")
       expect(json[:token]).to be_nil
       expect(json[:user]).to be_nil
     end
@@ -90,7 +90,7 @@ RSpec.describe "User Sessions", type: :request do
       json = JSON.parse(response.body, symbolize_names: true)
 
       expect(response).to have_http_status(:bad_request)
-      expect(json[:error]).to eq("Email and password are required")
+      expect(json[:errors][0][:message]).to eq("Email and password are required")
       expect(json[:token]).to be_nil
       expect(json[:user]).to be_nil
     end
@@ -101,7 +101,7 @@ RSpec.describe "User Sessions", type: :request do
       json = JSON.parse(response.body, symbolize_names: true)
 
       expect(response).to have_http_status(:bad_request)
-      expect(json[:error]).to eq("Email and password are required")
+      expect(json[:errors][0][:message]).to eq("Email and password are required")
       expect(json[:token]).to be_nil
       expect(json[:user]).to be_nil
     end
@@ -112,7 +112,7 @@ RSpec.describe "User Sessions", type: :request do
       json = JSON.parse(response.body, symbolize_names: true)
 
       expect(response).to have_http_status(:bad_request)
-      expect(json[:error]).to eq("Email and password are required")
+      expect(json[:errors][0][:message]).to eq("Email and password are required")
       expect(json[:token]).to be_nil
       expect(json[:user]).to be_nil
     end
@@ -123,7 +123,7 @@ RSpec.describe "User Sessions", type: :request do
       json = JSON.parse(response.body, symbolize_names: true)
 
       expect(response).to have_http_status(:bad_request)
-      expect(json[:error]).to eq("Email and password are required")
+      expect(json[:errors][0][:message]).to eq("Email and password are required")
       expect(json[:token]).to be_nil
       expect(json[:user]).to be_nil
     end
@@ -162,7 +162,7 @@ RSpec.describe "User Sessions", type: :request do
       json = JSON.parse(response.body, symbolize_names: true)
 
       expect(response).to have_http_status(:unauthorized)
-      expect(json[:error]).to eq("Token is missing")
+      expect(json[:errors][0][:message]).to eq("Token is missing")
     end
 
     it "should return error with invalid token" do
@@ -171,7 +171,7 @@ RSpec.describe "User Sessions", type: :request do
       json = JSON.parse(response.body, symbolize_names: true)
 
       expect(response).to have_http_status(:unauthorized)
-      expect(json[:error]).to eq("Invalid or expired token")
+      expect(json[:errors][0][:message]).to eq("Invalid or expired token")
     end
 
     # it "should return error with malformed authorization header" do
